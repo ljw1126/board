@@ -2,12 +2,12 @@ package com.example.article.api;
 
 import com.example.article.service.request.ArticleCreateRequest;
 import com.example.article.service.request.ArticleUpdateRequest;
+import com.example.article.service.response.ArticlePageResponse;
 import com.example.article.service.response.ArticleResponse;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestClient;
 
-@Disabled
 public class ArticleApiTest {
     RestClient restClient = RestClient.create("http://localhost:9000");
 
@@ -30,6 +30,19 @@ public class ArticleApiTest {
                 .body(ArticleResponse.class);
 
         System.out.println(response);
+    }
+
+    @Test
+    void readAll() {
+        ArticlePageResponse response = restClient.get()
+                .uri("/v1/articles?boardId=1&pageSize=30&page=50000")
+                .retrieve()
+                .body(ArticlePageResponse.class);
+
+        System.out.println("response.getCount() = " + response.getCount());
+        for(ArticleResponse article : response.getArticles()) {
+            System.out.println(article.getArticleId());
+        }
     }
 
     @Test
