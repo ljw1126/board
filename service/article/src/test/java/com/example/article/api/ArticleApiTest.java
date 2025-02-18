@@ -1,4 +1,4 @@
-package com.example.article;
+package com.example.article.api;
 
 import com.example.article.service.request.ArticleCreateRequest;
 import com.example.article.service.request.ArticleUpdateRequest;
