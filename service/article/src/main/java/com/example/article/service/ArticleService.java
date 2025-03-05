@@ -7,10 +7,11 @@ import com.example.article.service.request.ArticleUpdateRequest;
 import com.example.article.service.response.ArticlePageResponse;
 import com.example.article.service.response.ArticleResponse;
 import kuke.board.common.snowflake.Snowflake;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -54,5 +55,14 @@ public class ArticleService {
                         PageLimitCalculator.pageLimit(page, pageSize, 10L)
                 )
         );
+    }
+
+    @Transactional(readOnly = true)
+    public List<ArticleResponse> readAllInfiniteScroll(Long boardId, Long pageSize, Long lastArticleId) {
+        List<Article> articles = lastArticleId == null ?
+                articleRepository.findAllInfiniteScroll(boardId, pageSize) :
+                articleRepository.findAllInfiniteScroll(boardId, pageSize, lastArticleId);
+
+        return articles.stream().map(ArticleResponse::from).toList();
     }
 }
