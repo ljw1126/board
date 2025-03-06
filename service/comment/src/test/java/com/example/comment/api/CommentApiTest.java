@@ -4,7 +4,6 @@ import com.example.comment.service.response.CommentPageResponse;
 import com.example.comment.service.response.CommentResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.client.RestClient;

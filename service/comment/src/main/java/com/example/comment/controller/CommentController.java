@@ -5,7 +5,6 @@ import com.example.comment.service.request.CommentCreateRequest;
 import com.example.comment.service.response.CommentPageResponse;
 import com.example.comment.service.response.CommentResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
