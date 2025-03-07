@@ -1,2 +1,23 @@
 server:
   port: 9001
+spring:
+  application:
+    name: board-article-comment-service
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/comment
+    username: tester
+    password: 1234
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    open-in-view: false
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        boot:
+          allow_jdbc_metadata_access: false
+  sql:
+    init:
+      mode: never
