@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
 public class DataInitializer {
 
     private static final int BULK_INSERT_SIZE = 2000;
-    private static final int EXECUTE_COUNT = 6000;
+    private static final int EXECUTE_COUNT = 5000;
 
     @PersistenceContext
     private EntityManager entityManager;
