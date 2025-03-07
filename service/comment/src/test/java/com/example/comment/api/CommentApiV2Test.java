@@ -1,12 +1,17 @@
 package com.example.comment.api;
 
+import com.example.comment.service.response.CommentPageResponseV2;
+import com.example.comment.service.response.CommentResponseV2;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.client.RestClient;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 class CommentApiV2Test {
     RestClient restClient = RestClient.create("http://localhost:9001");
@@ -51,6 +56,47 @@ class CommentApiV2Test {
                 .body(request)
                 .retrieve()
                 .body(CommentResponseV2.class);
+    }
+
+    @Test
+    void readAll() {
+        CommentPageResponseV2 response = restClient.get()
+                .uri("/v2/comments?articleId=1&pageSize=10&page=50000")
+                .retrieve()
+                .body(CommentPageResponseV2.class);
+
+        System.out.println("response.getCommentCount() = " + response.getCommentCount());
+        for(com.example.comment.service.response.CommentResponseV2 comment : response.getComments()) {
+            System.out.println("comment.getCommentId() = " + comment.getCommentId());
+        }
+
+    }
+
+    @Test
+    void readAllInfiniteScroll() {
+        List<com.example.comment.service.response.CommentResponseV2> response = restClient.get()
+                .uri("/v2/comments/infinite-scroll?articleId=1&pageSize=5")
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<com.example.comment.service.response.CommentResponseV2>>() {
+                });
+
+        System.out.println("firstPage");
+        for(com.example.comment.service.response.CommentResponseV2 res : response) {
+            System.out.println("comment.getCommentId() = " + res.getCommentId());
+        }
+
+        String lastPath = response.getLast().getPath();
+        List<com.example.comment.service.response.CommentResponseV2> response2 = restClient.get()
+                .uri("/v2/comments/infinite-scroll?articleId=1&pageSize=5&lastPath=" + lastPath)
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<com.example.comment.service.response.CommentResponseV2>>() {
+                });
+
+        System.out.println("secondPage");
+        for(com.example.comment.service.response.CommentResponseV2 res : response2) {
+            System.out.println("comment.getCommentId() = " + res.getCommentId());
+        }
+
     }
 
     @Getter
