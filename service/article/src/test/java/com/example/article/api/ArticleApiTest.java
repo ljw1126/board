@@ -15,13 +15,18 @@ public class ArticleApiTest {
 
     @Test
     void create() {
-        ArticleResponse response = restClient.post()
-                        .uri("/v1/article")
-                        .body(new ArticleCreateRequest("hi", "my content", 1L, 1L))
-                        .retrieve()
-                        .body(ArticleResponse.class);
+        ArticleResponse response = createArticle(new ArticleCreateRequest("hi", "my content", 1L, 1L));
 
         System.out.println(response);
+    }
+
+    private ArticleResponse createArticle(ArticleCreateRequest body) {
+        ArticleResponse response = restClient.post()
+                        .uri("/v1/article")
+                        .body(body)
+                        .retrieve()
+                        .body(ArticleResponse.class);
+        return response;
     }
 
     @Test
@@ -89,5 +94,29 @@ public class ArticleApiTest {
         restClient.delete()
                 .uri("/v1/article/{articleId}", 149866417983766528L)
                 .retrieve();
+    }
+
+    @Test
+    void countTest() {
+        ArticleResponse response = createArticle(new ArticleCreateRequest("hi", "content", 1L, 2L));
+
+        Long count = restClient.get()
+                .uri("/v1/article/boards/{boardId}/count", 2L)
+                .retrieve()
+                .body(Long.class);
+
+        System.out.println("count = " + count);
+
+        restClient.delete()
+                .uri("/v1/article/{articleId}", response.getArticleId())
+                .retrieve();
+
+
+        Long count2 = restClient.get()
+                .uri("/v1/article/boards/{boardId}/count", 2L)
+                .retrieve()
+                .body(Long.class);
+
+        System.out.println("count2 = " + count2);
     }
 }

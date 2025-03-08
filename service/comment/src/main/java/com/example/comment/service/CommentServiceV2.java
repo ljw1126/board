@@ -1,8 +1,10 @@
 package com.example.comment.service;
 
 
+import com.example.comment.entity.ArticleCommentCount;
 import com.example.comment.entity.CommentPath;
 import com.example.comment.entity.CommentV2;
+import com.example.comment.repository.ArticleCommentCountRepository;
 import com.example.comment.repository.CommentRepositoryV2;
 import com.example.comment.service.request.CommentCreateRequestV2;
 import com.example.comment.service.response.CommentPageResponse;
@@ -22,6 +24,7 @@ import static java.util.function.Predicate.not;
 public class CommentServiceV2 {
     private final Snowflake snowflake = new Snowflake();
     private final CommentRepositoryV2 commentRepository;
+    private final ArticleCommentCountRepository articleCommentCountRepository;
 
     @Transactional
     public CommentResponseV2 create(CommentCreateRequestV2 request) {
@@ -39,6 +42,11 @@ public class CommentServiceV2 {
                         )
                 )
         );
+
+        int result = articleCommentCountRepository.increase(request.getArticleId());
+        if(result == 0) {
+            articleCommentCountRepository.save(ArticleCommentCount.of(request.getArticleId(), 1L));
+        }
 
         return CommentResponseV2.from(saved);
     }
@@ -83,6 +91,7 @@ public class CommentServiceV2 {
 
     private void delete(CommentV2 comment) {
         commentRepository.delete(comment);
+        articleCommentCountRepository.decrease(comment.getArticleId());
         if(!comment.isRoot()) {
             commentRepository.findByPath(comment.getCommentPath().getParentPath())
                     .filter(CommentV2::getDeleted)
@@ -108,5 +117,12 @@ public class CommentServiceV2 {
         return comments.stream()
                 .map(CommentResponseV2::from)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public Long count(Long articleId) {
+        return articleCommentCountRepository.findById(articleId)
+                .map(ArticleCommentCount::getCommentCount)
+                .orElse(0L);
     }
 }

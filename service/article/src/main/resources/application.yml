@@ -5,7 +5,7 @@ spring:
     name: board-article-service
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/board
+    url: jdbc:mysql://localhost:3306/article
     username: tester
     password: 1234
   jpa:
