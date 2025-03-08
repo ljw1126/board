@@ -120,4 +120,25 @@ class CommentApiV2Test {
         private String path;
         private LocalDateTime createdAt;
     }
+
+    @Test
+    void countTest() {
+        CommentResponseV2 response = create(new CommentCreateRequestV2(2L, "my content1", null, 1L));
+
+        Long count = restClient.get()
+                .uri("/v2/comments/articles/{articleId}/count", 2L)
+                .retrieve()
+                .body(Long.class);
+        System.out.println("count = " + count); // 1
+
+        restClient.delete()
+                .uri("/v2/comments/{commentId}", response.getCommentId())
+                .retrieve();
+
+        Long count2 = restClient.get()
+                .uri("/v2/comments/articles/{articleId}/count", 2L)
+                .retrieve()
+                .body(Long.class);
+        System.out.println("count2 = " + count2); // 0
+    }
 }
