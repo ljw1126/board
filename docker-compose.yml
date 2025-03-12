@@ -14,3 +14,8 @@ services:
       - TZ=UTC
     volumes:
       - ./mysql/init:/docker-entrypoint-initdb.d
+  redis:
+    image: redis:7.4
+    container_name: board-redis
+    ports:
+      - "6379:6379"
